@@ -2,6 +2,8 @@ from flask import Flask, session, render_template, send_from_directory, redirect
 from flask_socketio import SocketIO, emit
 from importlib_resources import files, as_file
 
+from vip.workspace import *
+
 import os
 import json
 
@@ -22,6 +24,10 @@ class VIP:
         self.host = "127.0.0.1"
         self.port = 80
         self.password = os.urandom(24).hex()
+        
+        self.workspace = Workspace()
+        def sendMsg(data): emit('message', data)
+        self.workspace.registerCallback(sendMsg)
 
         if os.path.isfile(self.config_dir):
             self.app.config.from_file(self.config_dir, load=json.load)
@@ -73,6 +79,18 @@ class VIP:
                 return redirect("/", 302)
             else:
                 return redirect("/login", 302)
+        
+        @self.socketio.on('message')
+        def message(data):
+            if 'authenticated' not in session or not session['authenticated']: return
+            self.workspace.onMessage(data)
+            
+        @self.socketio.on('request_data')
+        def req(data):
+            if 'authenticated' not in session or not session['authenticated']: return
+            emit('response', {'msg_id': data['msg_id'], 'data': self.workspace.onRequest(data['data'])})
+            
+            
         
     def run(self):
         self.socketio.run(self.app, host=self.host, port=self.port)
