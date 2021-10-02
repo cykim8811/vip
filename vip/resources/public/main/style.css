@@ -5,9 +5,53 @@ body{
     margin: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 
 #area{width: 320px; height: 720px;}
 #input{width: 320px;}
+
+.vipemphasize{
+    transition: filter 0.25s;
+    filter: drop-shadow(1.5px 1.5px 4px rgba(150, 135, 100, 0.7)) !important;
+}
+
+.vipnone{
+    transition: filter 0.1s;
+    transition: background-color 0.1s;
+    display: inline-block;
+    margin: 5px;
+    background-color: rgb(200, 200, 200);
+    border-radius: 5px;
+    user-select: none;
+    border: 1px solid rgb(80, 80, 80);
+    color: rgb(100, 100, 100);
+    font-size: 0.9em;
+    width: 48px;
+    height: 22px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 22px;
+}
+
+.viperror{
+    display: inline-block;
+    margin: 5px;
+    background-color: rgb(210, 170, 180);
+    border-radius: 5px;
+    user-select: none;
+    border: 1px solid black;
+    font-family: Consolas;
+    font-size: 0.8em;
+}
+
+.draggable{
+    transition: opacity 0.2s;
+}
