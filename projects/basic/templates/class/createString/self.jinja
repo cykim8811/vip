@@ -1,0 +1,13 @@
+<div style="
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+    margin: 5px;
+    background-color: rgb(210, 250, 220);
+" class="{{vip.register()}}">
+    <span style='font-size: 0.8em;'>
+    {{vip.method('create')|safe}}
+    </span>
+    {{vip.textbox('data')|safe}}
+</div>
