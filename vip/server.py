@@ -6,7 +6,7 @@ from vip.workspace import *
 
 import os
 import json
-
+import logging
 
 default_config = {
     'SECRET_KEY': os.urandom(24).hex(),
@@ -25,9 +25,14 @@ class VIP:
         self.port = 80
         self.password = os.urandom(24).hex()
         
+        
         self.workspace = Workspace()
         def sendMsg(data): emit('message', data)
         self.workspace.registerCallback(sendMsg)
+        
+        self.app.logger.disabled=True
+        log = logging.getLogger('werkzeug')
+        log.disabled = True
 
         if os.path.isfile(self.config_dir):
             self.app.config.from_file(self.config_dir, load=json.load)
@@ -54,7 +59,6 @@ class VIP:
         
         @self.app.route('/public/<path:path>')
         def public(path):
-            print(self.resource_dir, path)
             return send_from_directory(self.resource_dir, path)
         
         @self.app.before_request
@@ -91,6 +95,20 @@ class VIP:
             emit('response', {'msg_id': data['msg_id'], 'data': self.workspace.onRequest(data['data'])})
             
             
+    def addClassFromFile(self, class_ref, template_path):
+        self.workspace.addClassFromFile(class_ref, template_path)
+            
+    def addClassFromString(self, class_ref, template_string):
+        self.workspace.addClass(class_ref, template_string)
         
+    def addInstance(self, instance):
+        self.workspace.addInstance(instance)
+        
+    def addFunctionFromFile(self, function_ref, template_path):
+        self.workspace.addFunctionFromFile(function_ref, template_path)
+        
+    def addFunctionFromString(self, function_ref, template_string):
+        self.workspace.addFunction(function_ref, template_string)
+    
     def run(self):
         self.socketio.run(self.app, host=self.host, port=self.port)
