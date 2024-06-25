@@ -34,17 +34,10 @@ class VIPTemplate:
     
     def member(self, member):
         value = None
-        if '[' in member:
-            index = member[member.find('[') + 1: -1]
-            index = int(index) if index.isdigit() else index
-            member_ = member[0: member.find('[')]
-            var = self.instancewrap.target
-            value = var.__dict__[member_][index]
-        else:
-            if member not in self.instancewrap.target.__dict__:
-                self.instancewrap.target.__dict__[member] = None
-            var = self.instancewrap.target
-            value = var.__dict__[member]
+        if member not in self.instancewrap.target.__dict__:
+            self.instancewrap.target.__dict__[member] = None
+        var = self.instancewrap.target
+        value = var.__dict__[member]
             
         search = [t for t in self.workspace.memory if t.target is value]
         if len(search) == 0:
@@ -53,6 +46,16 @@ class VIPTemplate:
         else:
             instancewrap = search[0]
             return self.memberbox_template.render(data=instancewrap.render(), member=member, instanceId=self.instanceId)
+    
+    def item(self, index):
+        value = self.instancewrap.target[index]
+        search = [t for t in self.workspace.memory if t.target is value]
+        if len(search) == 0:
+            tempinstancewrap = self.workspace.addInstance(value, display=False)
+            return self.memberbox_template.render(data=tempinstancewrap.render(), member="["+str(index)+"]", instanceId=self.instanceId)
+        else:
+            instancewrap = search[0]
+            return self.memberbox_template.render(data=instancewrap.render(), member="["+str(index)+"]", instanceId=self.instanceId)
     
     def argument(self, member):
         if member not in self.instancewrap.target.__dict__:
@@ -254,11 +257,16 @@ class Workspace:
                 index = int(index) if index.isdigit() else index
                 member = member[0: member.find('[')]
                 target = self.getInstanceById(owner)
-                newId = self.addInstance(target.target.__dict__[member][index], display=False)
-                if type(target.target) is FunctionManager:
-                    target.target.args[member][index] = None
-                target.target.__dict__[member][index] = None
-                return newId.id
+                if '__dict__' not in target.target:
+                    newId = self.addInstance(target.target[index], display=False)
+                    target.target[index] = None
+                    return newId.id
+                else:
+                    newId = self.addInstance(target.target.__dict__[member][index], display=False)
+                    if type(target.target) is FunctionManager:
+                        target.target.args[member][index] = None
+                    target.target.__dict__[member][index] = None
+                    return newId.id
         if msg['type'] == "update_member_builtin":
             owner = msg['instanceId']
             member = msg['member']
@@ -305,7 +313,10 @@ class Workspace:
                 if type(target.target) is FunctionManager:
                     target.target.args[member][index] = self.getInstanceById(instanceId).target;
                 if owner:
-                    target.target.__dict__[member][index] = value.target
+                    if '__dict__' not in target.target:
+                        target.target[index] = value.target
+                    else:
+                        target.target.__dict__[member][index] = value.target
                 else:
                     self.getInstanceById(member).target[index] = value.target
                 

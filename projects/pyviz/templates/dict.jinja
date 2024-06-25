@@ -1,0 +1,16 @@
+
+<span class='{{vip.register()}} draggable'>
+    <div style="display:flex;flex-direction:row;background-color:#FFFFFF;border-bottom:1px solid #A0A0A0">
+        <div style="color:#9088BF;font-size:3.25rem;font-weight:400;font-family:DM Mono;user-select:none;display:flex;flex-direction:row;align-items:center;">{</div>
+        <div style="display:flex;flex-direction:column;margin-left:0.5rem;margin-right:0.5rem;">
+            {% for key, value in instance.items() %}
+                <div style="display:flex;flex-direction:row;">
+                    <div style="color:#20184F;font-size:1.25rem;font-weight:500;font-family:DM Mono;user-select:none;">{{key}}</div>
+                    <div style="color:#20184F;font-size:1.25rem;font-weight:500;font-family:DM Mono;user-select:none;">:</div>
+                    <div style="color:#20184F;font-size:1.25rem;font-weight:500;font-family:DM Mono;user-select:none;">{{vip.item(key)|safe}}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="color:#9088BF;font-size:3.25rem;font-weight:400;font-family:DM Mono;user-select:none;display:flex;flex-direction:row;align-items:center;">}</div>
+    </div>
+</span>

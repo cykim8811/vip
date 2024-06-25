@@ -65,7 +65,7 @@ async function updateVariableBuiltin(element, value){
 
 async function updateVariable(element, instanceId){
     let owner = element;
-    while (!(owner.parentElement == screen || owner.parentElement.classList.contains('vipinstance'))){
+    while (!(owner.parentElement == screen || owner.parentElement.classList.contains('vipinstance') || owner.classList.contains('vipmember'))){
         owner = owner.parentElement;
     }
     let ownertext = owner.classList[1].split('.');
@@ -194,7 +194,7 @@ function emphasize(instanceId){
             element.originalBorder = element.style.border;
         }
         
-        element.style.border="1px solid orange";
+        // element.style.border="1px solid orange";
         element.classList.add('vipemphasize');
     }
 }
