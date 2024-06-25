@@ -47,7 +47,7 @@ class VIP:
             print("Creating config file to", os.path.expanduser('~') + "/.vip")
             with open(self.config_dir, 'w') as f:
                 json.dump(default_config, f)
-        self.socketio = SocketIO(self.app)
+        self.socketio = SocketIO(self.app, cors_allowed_origins='*')
         
         @self.app.route('/')
         def root():

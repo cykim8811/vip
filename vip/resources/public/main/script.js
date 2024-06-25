@@ -1,4 +1,4 @@
-const socket = io.connect('http://52.78.66.0:80');
+const socket = io.connect();
 
 const screen = document.getElementById('screen');
 
